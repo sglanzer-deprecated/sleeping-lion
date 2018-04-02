@@ -12,7 +12,7 @@
   "repository": "",
   "scripts": {
     "build": "ember build",
-    "push": "git push -u https://sglanzer@github.com/sglanzer/sleeping-lion.git master:master",
+    "push": "git push https://sglanzer@github.com/sglanzer/sleeping-lion.git master:master",
     "start": "ember server",
     "test": "ember test"
   },
