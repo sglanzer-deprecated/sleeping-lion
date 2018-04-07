@@ -1,0 +1,60 @@
+{{#if (eq stage 'players')}}
+  <div>
+    <div>It's dangerous to go alone</div>
+    <div>Voluntold some mercs</div>
+  </div>
+
+  <div>
+    {{player-setup onChange=(action 'setPlayer' 1)}}
+    {{player-setup onChange=(action 'setPlayer' 2)}}
+    {{player-setup onChange=(action 'setPlayer' 3)}}
+    {{player-setup onChange=(action 'setPlayer' 4)}}
+  </div>
+
+  <button {{action (action 'savePlayers')}}>
+    Done
+  </button>
+{{else if (eq stage 'scenario')}}
+  {{#each model.players as |player|}}
+    <div>{{player.class}} - {{player.level}}</div>
+  {{/each}}
+
+  {{#power-select
+    options=scenarios
+    selected=scenario
+    onchange=(action 'setScenario')
+    as |scenario|}}
+    {{scenario.number}} - {{scenario.location}} - {{scenario.title}}
+    {{!-- <img src="{{country.flagUrl}}" class="icon-flag" alt="Flag of {{country.name}}">
+    <strong>{{country.name}}</strong> --}}
+  {{/power-select}}
+
+  {{#if scenario}}
+    <div>Requirements: {{scenario.requirements}}</div>
+    <div>Linked areas: {{scenario.links}}</div>
+    <div>Map tokens: {{scenario.mapTokens}}</div>
+    {{#each scenario.mapTokens as |mapToken|}}
+      <div>{{mapToken}}</div>
+    {{/each}}
+    <div>Introduction:</div>
+    {{#each scenario.introduction as |introduction|}}
+      <div>{{introduction}}</div>
+    {{/each}}
+    <div>Goal: {{scenario.goal}}</div>
+    <div>
+      <div>Monster level: {{monsterLevel}}</div>
+      <button {{action (action 'decreaseMonsterLevel')}}>-</button>
+      <button {{action (action 'increaseMonsterLevel')}}>+</button>
+    </div>
+    <div>
+      <div>Trap damage: {{trap}}</div>
+      <div>Gold conversion: {{gold}}</div>
+      <div>XP bonus: {{xp}}</div>
+    </div>
+
+    <button {{action (action 'saveScenario')}}>
+      Done
+    </button>
+  {{/if}}
+
+{{/if}}

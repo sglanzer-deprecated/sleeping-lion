@@ -1,0 +1,6 @@
+<div>
+  <div>Image</div>
+  <div>{{player.class}}</div>
+</div>
+<input type='number' required value={{initiative}} disabled={{isLongRest}} oninput={{action (action 'setInitiative' value='target.value')}}>
+<input type='checkbox' label='Long rest' checked={{isLongRest}} onclick={{action (action 'setLongRest') value='target.checked'}}>

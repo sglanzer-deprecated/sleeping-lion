@@ -1,0 +1,73 @@
+<div style='display: flex; flex-direction: row;'>
+  <div style='flex: 1; display: flex; flex-direction: column;'>
+    <div>
+      {{#each order as |entity index|}}
+        {{#if entity.class}}
+          {{entity-card entity=entity
+            onSelect=(action 'targetEntity' entity)
+          }}
+        {{/if}}
+      {{/each}}
+    </div>
+
+    <hr style='width: 100%;'>
+
+    <div>
+      {{#each order as |entity index|}}
+        {{#if entity.type}}
+          {{entity-card entity=entity
+            onSelect=(action 'targetEntity' entity)
+          }}
+        {{/if}}
+      {{/each}}
+    </div>
+  </div>
+
+  <div style='flex: 1;'>
+    {{#each order as |entity index|}}
+      {{entity-card entity=entity
+        activeEntity=(get order model.activeOrder)
+        targetEntity=targetEntity
+        onSelect=(action 'targetEntity' entity)
+      }}
+    {{/each}}
+  </div>
+
+  <div style='flex: 1;'>
+    {{#with (get order model.activeOrder) as |entity|}}
+      {{entity-card entity=entity onSelect=(action 'targetEntity' entity)}}
+    {{/with}}
+
+    <div>Infuse</div>
+    <div>
+      {{#each infusions as |infusion|}}
+        <button {{action (action 'infuse' infusion)}}>
+          {{infusion}}
+        </button>
+      {{/each}}
+    </div>
+
+    <div>Consume</div>
+    <div>
+      {{#each infusions as |infusion|}}
+        <button {{action (action 'consume' infusion)}}>
+          {{infusion}}
+        </button>
+      {{/each}}
+    </div>
+
+    <hr>
+
+    {{#if targetEntity}}
+      {{entity-action-card entity=targetEntity
+        damage=(action 'damage')
+        heal=(action 'heal')
+        toggleCondition=(action 'toggleCondition')
+      }}
+    {{/if}}
+
+    <button {{action (action 'advanceOrder')}}>
+      Done
+    </button>
+  </div>
+</div>

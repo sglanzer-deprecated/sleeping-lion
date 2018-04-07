@@ -19,6 +19,9 @@ module.exports = function(deployTarget) {
 
   if (deployTarget === 'production') {
     ENV.build.environment = 'production';
+    ENV.git = {
+      repo: 'https://sglanzer@github.com/sglanzer/sleeping-lion.git'
+    };
     // configure other plugins for production deploy target here
   }
 

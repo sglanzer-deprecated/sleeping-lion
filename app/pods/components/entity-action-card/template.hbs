@@ -1,0 +1,28 @@
+{{entity-card entity=entity}}
+
+<div>Damage</div>
+<div>
+  {{#each hpValues as |hp|}}
+    <button {{action (action damage entity hp)}}>
+      {{hp}}
+    </button>
+  {{/each}}
+</div>
+
+<div>Heal</div>
+<div>
+  {{#each hpValues as |hp|}}
+    <button {{action (action heal entity hp)}}>
+      {{hp}}
+    </button>
+  {{/each}}
+</div>
+
+<div>Conditions</div>
+<div>
+  {{#each conditions as |condition|}}
+    <button {{action (action toggleCondition entity condition)}}>
+      {{condition.shorthand}}
+    </button>
+  {{/each}}
+</div>

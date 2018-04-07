@@ -12,6 +12,7 @@
   "repository": "",
   "scripts": {
     "build": "ember build",
+    "deploy": "ember deploy production",
     "push": "git push https://sglanzer@github.com/sglanzer/sleeping-lion.git master:master",
     "start": "ember server",
     "test": "ember test"
@@ -37,8 +38,11 @@
     "ember-data": "~2.16.2",
     "ember-export-application-global": "^2.0.0",
     "ember-load-initializers": "^1.0.0",
+    "ember-pouch": "^5.0.0",
+    "ember-power-select": "^2.0.0-beta.3",
     "ember-resolver": "^4.0.0",
     "ember-source": "~2.16.0",
+    "ember-truth-helpers": "^2.0.0",
     "loader.js": "^4.2.3"
   },
   "engines": {

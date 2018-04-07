@@ -7,6 +7,10 @@ const Router = EmberRouter.extend({
 });
 
 Router.map(function() {
+  this.route('scenario-setup', { path: '/' });
+  this.route('reveal');
+  this.route('round-setup');
+  this.route('round');
 });
 
 export default Router;

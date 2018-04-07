@@ -1,0 +1,17 @@
+<div>
+  <div>
+    <div>Sleeping Lion</div>
+    <div>Gloomhaven Scenario Assistant</div>
+  </div>
+  <button {{action (action 'reset')}}>Reset</button>
+
+  <div style='display: flex;'>
+    {{#each infusions as |infusion|}}
+      <div style='margin-right: 20px;'>
+        {{infusion}}: {{get model.infusions infusion}}
+      </div>
+    {{/each}}
+  </div>
+</div>
+
+{{outlet}}

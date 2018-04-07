@@ -1,0 +1,13 @@
+<div>Class</div>
+{{#each playerClasses as |playerClass|}}
+  <button {{action (action 'setPlayerClass' playerClass)}}>
+    {{playerClass}}
+  </button>
+{{/each}}
+
+<div>Level</div>
+{{#each playerLevels as |playerLevel|}}
+  <button {{action (action 'setPlayerLevel' playerLevel)}}>
+    {{playerLevel}}
+  </button>
+{{/each}}

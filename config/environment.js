@@ -4,6 +4,7 @@
 module.exports = function(environment) {
   let ENV = {
     modulePrefix: 'sleeping-lion',
+    podModulePrefix: 'sleeping-lion/pods',
     environment,
     rootURL: '/',
     locationType: 'auto',
