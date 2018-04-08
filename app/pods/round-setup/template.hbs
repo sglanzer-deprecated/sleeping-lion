@@ -2,41 +2,48 @@
 
 <div>Enter initiative</div>
 
-<form {{action (action 'setMonsterInitiative') on='submit'}}>
-  {{#each model.players as |player|}}
-    {{player-initiative
-      onChange=(action 'setPlayerInitiative' player)
-    }}
-  {{/each}}
+{{#unless playerInitiativeLockedIn}}
+  <form {{action (action 'setMonsterInitiative') on='submit'}}>
+    {{#each model.players as |player|}}
+      {{player-initiative
+        player=player
+        onChange=(action 'setPlayerInitiative' player)
+      }}
+    {{/each}}
 
-  <button type='submit'>
-    Done
-  </button>
-</form>
+    <button type='submit'>
+      Done
+    </button>
+  </form>
+{{else}}
+  <div>
+    {{#each model.players as |player|}}
+      <div>{{player.class}}: {{player.initiative}}</div>
+    {{/each}}
+  </div>
 
-{{#each initiativeSummary as |monsterInitiativeSummary|}}
-  <div style='display: flex; flex-direction: column; align-items: center;'>
-    <div>{{monsterInitiativeSummary.type}}</div>
-    <div>{{monsterInitiativeSummary.initiative}}</div>
-    <div style='display: flex; flex-direction: row;'>
-      <div style='display: flex; flex-direction: column;'>
-        <div>Elite</div>
-        {{#each monsterInitiativeSummary.eliteActions as |eliteAction|}}
-          <div>{{eliteAction}}</div>
-        {{/each}}
-      </div>
-      <div style='display: flex; flex-direction: column; margin-left: 1rem;'>
-        <div>Normal</div>
-        {{#each monsterInitiativeSummary.normalActions as |normalAction|}}
-          <div>{{normalAction}}</div>
-        {{/each}}
+  {{#each initiativeSummary as |monsterInitiativeSummary|}}
+    <div style='display: flex; flex-direction: column; align-items: center;'>
+      <div>{{monsterInitiativeSummary.type}}</div>
+      <div>{{monsterInitiativeSummary.initiative}}</div>
+      <div style='display: flex; flex-direction: row;'>
+        <div style='display: flex; flex-direction: column;'>
+          <div>Elite</div>
+          {{#each monsterInitiativeSummary.eliteActions as |eliteAction|}}
+            <div>{{eliteAction}}</div>
+          {{/each}}
+        </div>
+        <div style='display: flex; flex-direction: column; margin-left: 1rem;'>
+          <div>Normal</div>
+          {{#each monsterInitiativeSummary.normalActions as |normalAction|}}
+            <div>{{normalAction}}</div>
+          {{/each}}
+        </div>
       </div>
     </div>
-  </div>
-{{/each}}
+  {{/each}}
 
-{{#if initiativeSummary}}
   <button {{action (action 'nextStage')}}>
     Done
   </button>
-{{/if}}
+{{/unless}}

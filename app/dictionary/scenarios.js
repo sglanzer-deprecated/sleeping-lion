@@ -46,6 +46,23 @@ export default [
             { type: 'Bandit guard', elite: 2, normal: 4 }
           ]
         }
+      },
+      {
+        id: 'G1b',
+        monsterTokens: {
+          2: [
+            { type: 'Bandit archer', elite: 1, normal: 0 },
+            { type: 'Bandit guard', elite: 0, normal: 2 }
+          ],
+          3: [
+            { type: 'Bandit archer', elite: 1, normal: 2 },
+            { type: 'Bandit guard', elite: 1, normal: 0 }
+          ],
+          4: [
+            { type: 'Bandit archer', elite: 1, normal: 2 },
+            { type: 'Bandit guard', elite: 1, normal: 2 }
+          ]
+        }
       }
     ]
   }

@@ -1,63 +1,51 @@
 import Controller from '@ember/controller';
-import { assign } from '@ember/polyfills'
 import { A } from '@ember/array'
-import { isNone, isEmpty } from '@ember/utils'
 import { computed, set } from '@ember/object'
 import action from 'sleeping-lion/utils/action'
 
 export default Controller.extend({
 
-  monsterActions: computed('model.initiative', function () {
-    const scenarioInitiatives = this.get('model.initiative')
-    if (isEmpty(scenarioInitiatives)) {
-      return []
-    }
+  initiativeSummary: computed('monsterInitiativeLockedIn', function () {
+    const monsters = this.get('model.monsters')
 
-    return []
+    return Object.entries(monsters).map(([type, {initiative, eliteActions, normalActions}]) => {
+      return {
+        type,
+        initiative,
+        eliteActions,
+        normalActions
+      }
+    })
   }),
 
   actions: {
-    setPlayerInitiative (player, initiative, isLongRest) {
-      const scenarioInitiatives = this.get('model.initiative')
-      const playerInitiative = A(scenarioInitiatives).findBy('class', player.class)
-      if (isNone(playerInitiative)) {
-        scenarioInitiatives.push(assign({initiative, isLongRest}, player))
-      } else {
-        const index = scenarioInitiatives.indexOf(playerInitiative)
-        scenarioInitiatives.splice(index, 1)
-        playerInitiative.initiative = initiative
-        playerInitiative.isLongRest = isLongRest
-        scenarioInitiatives.push(playerInitiative)
-      }
-      this.set('model.initiative', scenarioInitiatives)
-      this.get('model').save()
+    async setPlayerInitiative (player, initiative, isLongRest) {
+      set(player, 'initiative', initiative)
+      set(player, 'isLongRest', isLongRest)
+      await this.get('model').save()
     },
 
     async setMonsterInitiative () {
+      this.set('playerInitiativeLockedIn', true)
+
       const monsters = this.get('model.monsters')
-      const initiativeSummary = Object.entries(monsters).map(([type, monsterModel]) => {
+
+      Object.entries(monsters).forEach(([, monsterModel]) => {
         // Draw a card for the monster type
         monsterModel.currentCard = monsterModel.deck.pop()
         monsterModel.initiative = monsterModel.currentCard.initiative
-        monsterModel.eliteActions = monsterModel.elite.length > 0 ? action(monsterModel.monsterStats.elite, monsterModel.currentCard) : null
-        monsterModel.normalActions = monsterModel.normal.length > 0 ? action(monsterModel.monsterStats.normal, monsterModel.currentCard) : null
-
-        return {
-          type,
-          initiative: monsterModel.initiative,
-          eliteActions: monsterModel.eliteActions,
-          normalActions: monsterModel.normalActions
-        }
+        monsterModel.eliteActions = action(monsterModel.monsterStats.elite, monsterModel.currentCard)
+        monsterModel.normalActions = action(monsterModel.monsterStats.normal, monsterModel.currentCard)
       })
 
       await this.get('model').save()
-      this.set('initiativeSummary', initiativeSummary)
+      this.set('monsterInitiativeLockedIn', true)
     },
 
     async nextStage () {
       const scenario = this.get('model')
 
-      const monsterOrder = Object.entries(scenario.get('monsters')).reduce((monsters, [type, monsterModel]) => {
+      const monsters = Object.entries(scenario.get('monsters')).reduce((monsters, [, monsterModel]) => {
         monsters.addObjects(A(monsterModel.elite).sortBy('standee').map(monster => {
           set(monster, 'initiative', monsterModel.initiative)
           set(monster, 'actions', monsterModel.eliteActions)
@@ -73,8 +61,47 @@ export default Controller.extend({
         return monsters
       }, [])
 
-      const initiative = A(scenario.get('initiative'))
-      initiative.addObjects(monsterOrder)
+      const roundOrder = A(scenario.get('initiative'))
+      roundOrder.addObjects(monsters)
+      roundOrder.addObjects(scenario.get('players'))
+      A(roundOrder).sort((entityA, entityB) => {
+        if (entityA.initiative < entityB.initiative) {
+          return -1
+        }
+
+        if (entityA.initiative > entityB.initiative) {
+          return 1
+        }
+
+        if (entityA.class && !entityB.class) {
+          return -1
+        }
+
+        if (!entityA.class && entityB.class) {
+          return 1
+        }
+
+        if (entityA.version === 'elite' && entityB.version === 'normal') {
+          return -1
+        }
+
+        if (entityA.version === 'normal' && entityB.version === 'elite') {
+          return 1
+        }
+
+        if (entityA.standee && entityB.standee) {
+          if (entityA.standee < entityB.standee) {
+            return -1
+          }
+
+          if (entityA.standee > entityB.standee) {
+            return 1
+          }
+        }
+
+        return 0
+      })
+
       await scenario.save()
 
       this.set('model.stage', 'round')

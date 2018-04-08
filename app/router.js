@@ -10,7 +10,9 @@ Router.map(function() {
   this.route('scenario-setup', { path: '/' });
   this.route('reveal');
   this.route('round-setup');
-  this.route('round');
+  this.route('round', function() {
+    this.route('reveal');
+  });
 });
 
 export default Router;

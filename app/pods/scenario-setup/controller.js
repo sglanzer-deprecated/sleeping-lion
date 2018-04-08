@@ -83,11 +83,14 @@ export default Controller.extend({
 
     async saveScenario () {
       this.set('model.number', this.get('scenario.number'))
+      this.set('model.playerCount', this.get('model.players.length'))
       this.set('model.monsterLevel', this.get('monsterLevel'))
       this.set('model.monsters', {})
       this.set('model.stage', 'round-setup')
       this.set('model.round', 1)
+      this.set('model.initiative', [])
       this.set('model.reveal', this.get('scenario.startingTile'))
+      this.set('model.revealed', [])
       this.set('model.infusions', {
         fire: 0,
         ice: 0,

@@ -1,5 +1,5 @@
 import Controller from '@ember/controller';
-import { computed, get, set } from '@ember/object'
+import { get, set } from '@ember/object'
 import { A } from '@ember/array'
 import monsters from 'sleeping-lion/dictionary/monsters'
 
@@ -7,11 +7,6 @@ export default Controller.extend({
 
   infusions: ['fire', 'ice', 'air', 'earth', 'light', 'dark'], // TODO: Util
   undoRedoStack: [],
-
-  order: computed('model.initiative.[]', function () {
-    const initiative = this.get('model.initiative')
-    return A(initiative).sortBy('initiative', 'standee')
-  }),
 
   actions: {
     async advanceOrder () {
@@ -53,8 +48,17 @@ export default Controller.extend({
         })
 
         this.set('model.round', this.get('model.round') + 1)
+        this.get('model.players').forEach(player => {
+          set(player, 'initiative', null)
+        })
+        Object.entries(this.get('model.monsters')).forEach(([, monsterModel]) => {
+          set(monsterModel, 'initiative', null)
+          set(monsterModel, 'eliteActions', null)
+          set(monsterModel, 'normalActions', null)
+        })
         this.set('model.initiative', [])
         this.set('model.stage', 'round-setup')
+        this.set('model.activeOrder', 0)
         await this.get('model').save()
         this.transitionToRoute('round-setup')
       }
@@ -130,6 +134,10 @@ export default Controller.extend({
       set(entity, 'conditions', currentConditions)
 
       await this.get('model').save()
+    },
+
+    reveal () {
+      this.transitionToRoute('round.reveal')
     }
   }
 
