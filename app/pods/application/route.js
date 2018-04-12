@@ -1,35 +1,39 @@
-import Route from '@ember/routing/route';
+import Route from '@ember/routing/route'
+import { inject } from '@ember/service'
 import { isNone } from '@ember/utils'
 
 export default Route.extend({
-  async model () {
-    const scenarios = await this.store.findAll('scenario')
-    let scenario = scenarios.get('firstObject')
+  scenario: inject(),
 
-    if (isNone(scenario)) {
-      scenario = this.store.createRecord('scenario', {
-        number: null,
-        round: null,
+  // Initialize or retrieve a scenario
+  async model () {
+    const models = await this.store.findAll('scenario')
+    let model = models.get('firstObject')
+
+    if (isNone(model)) {
+      model = this.store.createRecord('scenario', {
         stage: 'scenario-setup',
-        infusions: [],
-        revealedTiles: [],
-        revealingTile: null,
-        players: [],
-        monsters: [],
-        baseMonsterAttackModifierDeck: [],
-        roundQueue: []
+        players: []
       })
-      scenario.save()
+      await model.save()
     }
 
-    return scenario
+    this.get('scenario').setModel(model)
+
+    return model
   },
 
   afterModel (model) {
-    if (isNone(model.get('reveal'))) {
+    // Handle the routing on app boot with both a fresh and updated scenario
+    if (isNone(model.get('revealing'))) {
+      // In a fresh scenario the stage is initialized to 'scenario-setup'
+      // Otherwise, the stage is progressed as the scenario updates
       this.transitionTo(model.get('stage'))
     } else {
-      this.transitionTo('reveal')
+      // If a reveal is in progress in an updated scenario the reveal occurs
+      // before transitioning to the current scenario stage (the reveal will
+      // progress the scenario state)
+      this.transitionTo('revealing')
     }
   }
-});
+})

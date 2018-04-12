@@ -1,13 +1,19 @@
 <div>Class</div>
-{{#each playerClasses as |playerClass|}}
-  <button {{action (action 'setPlayerClass' playerClass)}}>
-    {{playerClass}}
+{{#each types as |type|}}
+  <button {{action (action 'setType' type)}}>
+    {{type}}
   </button>
 {{/each}}
 
-<div>Level</div>
-{{#each playerLevels as |playerLevel|}}
-  <button {{action (action 'setPlayerLevel' playerLevel)}}>
-    {{playerLevel}}
-  </button>
-{{/each}}
+{{#if player.type}}
+  <div>Level</div>
+  {{#each levels as |level|}}
+    <button {{action (action 'setLevel' level)}}>
+      {{level}}
+    </button>
+  {{/each}}
+{{/if}}
+
+<div>
+  {{player.hp}}
+</div>

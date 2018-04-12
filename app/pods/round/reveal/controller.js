@@ -1,13 +1,14 @@
-import Controller from '@ember/controller';
+import Controller from '@ember/controller'
+import { inject } from '@ember/service'
 
 export default Controller.extend({
 
+  scenario: inject(),
+
   actions: {
     async reveal (tile) {
-      this.set('model.reveal', tile)
-      await this.get('model').save()
-      this.transitionToRoute('reveal')
+      this.get('scenario').reveal(tile)
     }
   }
 
-});
+})

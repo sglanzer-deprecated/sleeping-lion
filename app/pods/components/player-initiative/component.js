@@ -1,30 +1,18 @@
-import Component from '@ember/component';
+import Component from '@ember/component'
+import { computed } from '@ember/object'
 
 export default Component.extend({
-  initiative: null,
-  isLongRest: false,
+  isLongRest: computed('player.initiative', function () {
+    return this.get('player.initiative') === 99.5
+  }),
 
   actions: {
     setInitiative (initiative) {
-      if (initiative > 99) {
-        this.set('initiative', 99)
-      } else if (initiative < 0) {
-        this.set('initiative', 0)
-      } else {
-        this.set('initiative', Number(Number(initiative).toFixed(0)))
-      }
-      this.onChange(this.get('initiative'), this.get('isLongRest'))
+      this.onChange(Math.max(0, Math.min(Number(initiative).toFixed(0), 99)))
     },
 
     setLongRest (isLongRest) {
-      if (isLongRest) {
-        this.set('initiative', 99)
-        this.set('isLongRest', true)
-      } else {
-        this.set('initiative', null)
-        this.set('isLongRest', false)
-      }
-      this.onChange(this.get('initiative'), this.get('isLongRest'))
+      this.onChange(isLongRest ? 99.5 : null)
     }
   }
 });

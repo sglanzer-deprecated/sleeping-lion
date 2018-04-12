@@ -1,24 +1,25 @@
-import Component from '@ember/component';
+import Component from '@ember/component'
 import { computed } from '@ember/object'
+import { types, levels } from 'sleeping-lion/dictionary/player'
 
 export default Component.extend({
-  playerClasses: ['None', 'Mindthief', 'Tinkerer', 'Scoundrel', 'Brute', 'Cragheart', 'Spellweaver'],
-  playerLevels: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  types,
+  levels,
 
-  player: computed(function () {
-    return {}
+  player: computed('model.players.[]', 'model.players.@each.hp', function () {
+    return this.get('model.players').find(player => {
+      return player.index === this.get('index')
+    })
   }),
 
   actions: {
-    setPlayerClass (playerClass) {
-      this.set('player.class', playerClass)
-      this.set('player.level', 1)
-      this.onChange(this.get('player'))
+    setType (type) {
+      const level = 1 // Default to level 1
+      this.onChange(this.get('index'), type, level)
     },
 
-    setPlayerLevel (playerLevel) {
-      this.set('player.level', playerLevel)
-      this.onChange(this.get('player'))
+    setLevel (level) {
+      this.onChange(this.get('index'), this.get('player.type'), level)
     }
   }
-});
+})

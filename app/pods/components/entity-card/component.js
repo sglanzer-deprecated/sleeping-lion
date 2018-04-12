@@ -9,6 +9,13 @@ export default Component.extend({
     'isTarget:target'
   ],
 
+  monsterActions: computed(function() {
+    const version = this.get('entity.version')
+    if (version) {
+      return this.get(`model.monsterModels.${this.get('entity.type')}.actions.${version}`)
+    }
+  }),
+
   isActive: computed('activeEntity', function () {
     const entity = this.get('entity')
     const activeEntity = this.get('activeEntity')
@@ -16,12 +23,12 @@ export default Component.extend({
       return false
     }
 
-    if (entity.type
-      && entity.type === activeEntity.type
-      && entity.standee === activeEntity.standee) {
-      return true
+    if (entity.version) {
+      return entity.type === activeEntity.type
+        && entity.standee === activeEntity.standee
+    } else {
+      return entity.type === activeEntity.type
     }
-    return entity.class && entity.class === activeEntity.class
   }),
 
   isTarget: computed('targetEntity', function () {
@@ -31,16 +38,16 @@ export default Component.extend({
       return false
     }
 
-    if (entity.type
-      && entity.type === targetEntity.type
-      && entity.standee === targetEntity.standee) {
-      return true
+    if (entity.version) {
+      return entity.type === targetEntity.type
+        && entity.standee === targetEntity.standee
+    } else {
+      return entity.type === targetEntity.type
     }
-    return entity.class && entity.class === targetEntity.class
   }),
 
   click () {
     this.onSelect()
   }
 
-});
+})

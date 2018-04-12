@@ -2,8 +2,8 @@
 
 <div>Enter initiative</div>
 
-{{#unless playerInitiativeLockedIn}}
-  <form {{action (action 'setMonsterInitiative') on='submit'}}>
+{{#unless model.playerInitiativeLocked}}
+  <form {{action (action 'drawMonsterCards') on='submit'}}>
     {{#each model.players as |player|}}
       {{player-initiative
         player=player
@@ -18,25 +18,33 @@
 {{else}}
   <div>
     {{#each model.players as |player|}}
-      <div>{{player.class}}: {{player.initiative}}</div>
+      <div>{{player.type}}: {{player.initiative}}</div>
     {{/each}}
   </div>
 
-  {{#each initiativeSummary as |monsterInitiativeSummary|}}
+  {{#each monsterSummary as |monsterTypeSummary|}}
     <div style='display: flex; flex-direction: column; align-items: center;'>
-      <div>{{monsterInitiativeSummary.type}}</div>
-      <div>{{monsterInitiativeSummary.initiative}}</div>
+      <div>{{monsterTypeSummary.type}}</div>
+      <div>{{monsterTypeSummary.initiative}}</div>
       <div style='display: flex; flex-direction: row;'>
         <div style='display: flex; flex-direction: column;'>
           <div>Elite</div>
-          {{#each monsterInitiativeSummary.eliteActions as |eliteAction|}}
-            <div>{{eliteAction}}</div>
+          {{#each monsterTypeSummary.actions.elite as |eliteAction|}}
+            {{#if eliteAction.value}}
+              <div>{{eliteAction.key}}: {{eliteAction.value}}</div>
+            {{else}}
+              <div>{{eliteAction.key}}</div>
+            {{/if}}
           {{/each}}
         </div>
         <div style='display: flex; flex-direction: column; margin-left: 1rem;'>
           <div>Normal</div>
-          {{#each monsterInitiativeSummary.normalActions as |normalAction|}}
-            <div>{{normalAction}}</div>
+          {{#each monsterTypeSummary.actions.normal as |normalAction|}}
+            {{#if normalAction.value}}
+              <div>{{normalAction.key}}: {{normalAction.value}}</div>
+            {{else}}
+              <div>{{normalAction.key}}</div>
+            {{/if}}
           {{/each}}
         </div>
       </div>

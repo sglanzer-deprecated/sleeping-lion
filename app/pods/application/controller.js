@@ -3,8 +3,8 @@ import { getOwner } from '@ember/application'
 import { types } from 'sleeping-lion/dictionary/infusions'
 
 export default Controller.extend({
-
-  infusions: types,
+  // Used to loop over the infusions to present the scenario infusion state
+  infusionTypes: types,
 
   actions: {
     async reset () {

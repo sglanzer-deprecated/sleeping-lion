@@ -1,6 +1,9 @@
 import BanditArcher from './monsters/bandit-archer'
 import BanditGuard from './monsters/bandit-guard'
 
+const attackModifierDeck = ['null', -2, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 'x2']
+export { attackModifierDeck }
+
 export default {
   'Bandit archer': BanditArcher,
   'Bandit guard': BanditGuard

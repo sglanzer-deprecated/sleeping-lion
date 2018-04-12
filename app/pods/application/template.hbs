@@ -6,9 +6,9 @@
   <button {{action (action 'reset')}}>Reset</button>
 
   <div style='display: flex;'>
-    {{#each infusions as |infusion|}}
+    {{#each infusionTypes as |infusionType|}}
       <div style='margin-right: 20px;'>
-        {{infusion}}: {{get model.infusions infusion}}
+        {{infusionType}}: {{get model.infusions infusionType}}
       </div>
     {{/each}}
   </div>

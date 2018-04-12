@@ -6,17 +6,36 @@ const {
 } = DS
 
 export default Model.extend({
-  number: attr('number'),
-  round: attr('number'),
+  // Initialization properties
   stage: attr('string'),
-  infusions: attr(),
-  reveal: attr('string'),
-  revealed: attr(),
-  players: attr(),
-  playerCount: attr('number'),
+
+  // Scenario
+  scenario: attr(),
   monsterLevel: attr('number'),
-  monsters: attr(),
-  baseMonsterAttackModifierDeck: attr(),
-  initiative: attr(),
-  activeOrder: attr('number')
+  trapDamage: attr('number'),
+  goldPerToken: attr('number'),
+  bonusXp: attr('number'),
+
+  // "Travel" (initiate the scenario)
+
+  // Global scenario management properties
+  initialPlayerCount: attr('number'),
+  round: attr('number'),
+  infusions: attr(),
+
+  // Tile reveal
+  revealing: attr('string'),
+  revealed: attr(),
+
+  // Entity management
+  players: attr(),
+  monsterModels: attr(),
+  monsterAttackModifierDeck: attr(),
+  monsterCurses: attr('number'),
+
+  // Round management
+  playerInitiativeLocked: attr('boolean'),
+  roundOrder: attr(),
+  activeRoundOrder: attr('number'),
+  targetEntity: attr()
 })

@@ -4,45 +4,69 @@
   <div style='display: flex; flex-direction: row;'>
     <div style='flex: 1; display: flex; flex-direction: column;'>
       <div>
-        {{#each model.initiative as |entity index|}}
-          {{#if entity.class}}
-            {{entity-card entity=entity
-              onSelect=(action 'targetEntity' entity)
+        {{#each model.roundOrder as |entity|}}
+          {{#unless entity.version}}
+            {{entity-card
+              entity=entity
+              onSelect=(action 'target' entity)
             }}
-          {{/if}}
+          {{/unless}}
         {{/each}}
       </div>
 
       <hr style='width: 100%;'>
 
       <div>
-        {{#each model.initiative as |entity index|}}
-          {{#if entity.type}}
-            {{entity-card entity=entity
-              onSelect=(action 'targetEntity' entity)
-            }}
-          {{/if}}
+        {{#each actionsPerMonsterType as |monster|}}
+          <div>{{monster.type}}</div>
+          <div style='display: flex;'>
+            {{#if monster.actions.elite.length}}
+              <div style='display: flex; flex-direction: column;'>
+                <div>Elite:</div>
+                {{#each monster.actions.elite as |eliteAction|}}
+                  {{#if eliteAction.value}}
+                    <div>{{eliteAction.key}}: {{eliteAction.value}}</div>
+                  {{else}}
+                    <div>{{eliteAction.key}}</div>
+                  {{/if}}
+                {{/each}}
+              </div>
+            {{/if}}
+            {{#if monster.actions.normal.length}}
+              <div style='margin-left: 20px; display: flex; flex-direction: column;'>
+                <div>Normal:</div>
+                {{#each monster.actions.normal as |normalAction|}}
+                  {{#if normalAction.value}}
+                    <div>{{normalAction.key}}: {{normalAction.value}}</div>
+                  {{else}}
+                    <div>{{normalAction.key}}</div>
+                  {{/if}}
+                {{/each}}
+              </div>
+            {{/if}}
+          </div>
         {{/each}}
       </div>
     </div>
 
     <div style='flex: 1;'>
-      {{#each model.initiative as |entity index|}}
-        {{entity-card entity=entity
-          activeEntity=(get model.initiative model.activeOrder)
-          targetEntity=targetEntity
-          onSelect=(action 'targetEntity' entity)
+      {{#each model.roundOrder as |entity|}}
+        {{entity-card
+          entity=entity
+          activeEntity=(get model.roundOrder model.activeRoundOrder)
+          targetEntity=model.targetEntity
+          onSelect=(action 'target' entity)
         }}
       {{/each}}
     </div>
 
     <div style='flex: 1;'>
-      {{#with (get model.initiative model.activeOrder) as |entity|}}
-        {{entity-card entity=entity onSelect=(action 'targetEntity' entity)}}
+      {{#with (get model.roundOrder model.activeRoundOrder) as |entity|}}
+        {{entity-card entity=entity model=model onSelect=(action 'target' entity)}}
 
-        {{#if entity.class}}
+        {{#unless entity.version}}
           <button {{action 'reveal'}}>Reveal</button>
-        {{/if}}
+        {{/unless}}
       {{/with}}
 
       <div>Infuse</div>
@@ -65,15 +89,15 @@
 
       <hr>
 
-      {{#if targetEntity}}
-        {{entity-action-card entity=targetEntity
+      {{#if model.targetEntity}}
+        {{entity-action-card entity=model.targetEntity
           damage=(action 'damage')
           heal=(action 'heal')
           toggleCondition=(action 'toggleCondition')
         }}
       {{/if}}
 
-      <button {{action (action 'advanceOrder')}}>
+      <button {{action (action 'advanceRoundOrder')}}>
         Done
       </button>
     </div>
