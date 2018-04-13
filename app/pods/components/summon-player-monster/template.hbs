@@ -1,0 +1,15 @@
+<form {{action (action summonPlayerMonster monsterType monsterHp) on='submit'}}>
+  <input required
+    value={{monsterType}}
+    oninput={{action (action 'setMonsterType' value='target.value')}}
+  >
+
+  <input type="number" required
+    value={{monsterHp}}
+    oninput={{action (action 'setMonsterHp' value='target.value')}}
+  >
+
+  <button type='submit'>
+    Done
+  </button>
+</form>

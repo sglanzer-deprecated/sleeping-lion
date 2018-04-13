@@ -129,6 +129,11 @@ export default Service.extend({
 
       ;['elite', 'normal'].forEach(version => {
         for (let number = 0; number < get(counts, version); number++) {
+          if (standees.length <= 0) {
+            // No standees remaining
+            return
+          }
+
           monsters.push({
             tileId,
             type,
@@ -178,7 +183,7 @@ export default Service.extend({
       }
 
       if (tileId !== get(model, 'scenario.initialTile')) {
-        // Add the monsters the round order and re-sort
+        // Add the monsters to the round order and re-sort
         const roundOrder = get(model, 'roundOrder')
         roundOrder.push(...monsters)
         sort(roundOrder)
@@ -201,6 +206,13 @@ export default Service.extend({
     const monsterModels = this.get('model.monsterModels')
 
     Object.entries(monsterModels).forEach(([type, monsterModel]) => {
+      const player = get(monsterModel, 'player')
+      if (player) {
+        // Player summoned monster
+        set(monsterModel, 'initiative', A(this.get('model.players')).findBy('type', player).initiative - 0.5)
+        return
+      }
+
       // Shuffle the monster deck if necessary and draw a card
       if (get(monsterModel, 'card.shuffle') === 1) {
         set(monsterModel, 'deck', shuffle(monsterDictionary[type].deck.slice()))
@@ -261,20 +273,120 @@ export default Service.extend({
     await this.get('model').save()
   },
 
+  async summonMonster (summonerInitiative, type, version) {
+    const model = this.get('model')
+    const monsterLevel = get(model, 'monsterLevel')
+    const stats = monsterDictionary[type].level[monsterLevel]
+    const standees = shuffle(this.getRemainingStandees(type))
+    if (standees.length <= 0) {
+      // No standees remaining
+      return
+    }
+
+    const monster = {
+      type,
+      version,
+      standee: standees.pop(),
+      maxHp: get(stats, `${version}.hp`),
+      hp: get(stats, `${version}.hp`),
+      conditions: [],
+      // Summons don't act in the current round, but add the monster
+      // before the monster that summoned it in the round order to make
+      // it available for targeting
+      initiative: summonerInitiative - 0.5
+    }
+
+    const monsterModel = get(model, `monsterModels.${type}`)
+    if (monsterModel) {
+      // More monsters for an existing type
+      get(monsterModel, 'monsters').push(monster)
+    } else {
+      // New monster type during a round
+      set(model, `monsterModels.${type}`, {
+        stats,
+        monsters: [monster],
+        deck: shuffle(monsterDictionary[type].deck.slice())
+      })
+    }
+
+    // Add the monster to the round order and re-sort
+    const roundOrder = get(model, 'roundOrder').slice()
+    roundOrder.push(monster)
+    sort(roundOrder)
+
+    // Increment the active round order since the new monster is being
+    // inserted prior to the summoner
+    setProperties(model, {
+      roundOrder,
+      activeRoundOrder: get(model, 'activeRoundOrder') + 1
+    })
+
+    await this.get('model').save()
+  },
+
+  async summonPlayerMonster (summonerInitiative, player, type, hp) {
+    const model = this.get('model')
+    const standees = A(this.get('model.roundOrder')).findBy('player', player)
+    let standee = standees ? standees.length + 1 : 1
+
+    const monster = {
+      type,
+      version: 'normal',
+      standee,
+      maxHp: hp,
+      hp,
+      conditions: [],
+      // Summons don't act in the current round, but add the monster
+      // before the monster that summoned it in the round order to make
+      // it available for targeting
+      initiative: summonerInitiative - 0.5
+    }
+
+    // Treat the summon as a new monster type
+    set(model, `monsterModels.${type}`, {
+      player,
+      monsters: [monster]
+    })
+
+    // Add the monster to the round order and re-sort
+    const roundOrder = get(model, 'roundOrder').slice()
+    roundOrder.push(monster)
+    sort(roundOrder)
+
+    // Increment the active round order since the new monster is being
+    // inserted prior to the summoner
+    setProperties(model, {
+      roundOrder,
+      activeRoundOrder: get(model, 'activeRoundOrder') + 1
+    })
+
+    await this.get('model').save()
+  },
+
   async target (entity) {
     this.set('model.targetEntity', entity)
     await this.get('model').save()
   },
 
-  async damage (entity, hp) {
+  async damage (damagerInitiative, entity, hp) {
     if (entity.hp - hp > 0) {
       set(entity, 'hp', entity.hp - hp)
     } else {
       // Dead/exhausted
       if (entity.version) {
+        const confirmed = window.confirm(`Remove ${entity.type} standee ${entity.standee} from the game`)
+        if (!confirmed) {
+          return
+        }
+
         const monsters = A(this.get(`model.monsterModels.${entity.type}.monsters`))
         const monster = monsters.findBy('standee', entity.standee)
         monsters.removeObject(monster)
+
+        if (monsters.length <= 0) {
+          const monsterModels = this.get(`model.monsterModels`)
+          delete monsterModels[entity.type]
+        }
 
         const roundOrder = this.get('model.roundOrder').slice()
         const roundEntity = roundOrder.find(({ type, standee }) => type === entity.type && standee === entity.standee)
@@ -282,6 +394,11 @@ export default Service.extend({
         roundOrder.splice(roundIndex, 1)
         this.set('model.roundOrder', roundOrder)
       } else {
+        const confirmed = window.confirm(`Remove the ${entity.type} from the game`)
+        if (!confirmed) {
+          return
+        }
+
         const players = A(this.get('model.players'))
         const player = players.findBy('type', entity.type)
         players.removeObject(player)
@@ -292,6 +409,10 @@ export default Service.extend({
         roundOrder.splice(roundIndex, 1)
         this.set('model.roundOrder', roundOrder)
       }
+      if (this.get('model.targetEntity.initiative') < damagerInitiative) {
+        this.set('model.activeRoundOrder', this.get('model.activeRoundOrder') - 1)
+      }
+      this.set('model.targetEntity', null)
     }
     await this.get('model').save()
   },

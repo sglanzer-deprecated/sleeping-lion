@@ -23,6 +23,24 @@ export default Controller.extend({
       this.transitionToRoute('round.reveal')
     },
 
+    beginSummoningMonster () {
+      this.set('summoningMonster', true)
+    },
+
+    summonMonster ({ initiative: summonerInitiative }, type, version) {
+      this.set('summoningMonster', false)
+      this.get('scenario').summonMonster(summonerInitiative, type, version)
+    },
+
+    beginSummoningPlayerMonster () {
+      this.set('summoningPlayerMonster', true)
+    },
+
+    summonPlayerMonster ({ initiative: summonerInitiative, type: player }, type, hp) {
+      this.set('summoningPlayerMonster', false)
+      this.get('scenario').summonPlayerMonster(summonerInitiative, player, `${type} (${player})`, hp)
+    },
+
     infuse (infusion) {
       this.get('scenario').infuse(infusion)
     },
@@ -35,8 +53,8 @@ export default Controller.extend({
       this.get('scenario').target(entity)
     },
 
-    damage (entity, hp) {
-      this.get('scenario').damage(entity, hp)
+    damage ({ initiative: damagerInitiative }, entity, hp) {
+      this.get('scenario').damage(damagerInitiative, entity, hp)
     },
 
     heal (entity, hp) {

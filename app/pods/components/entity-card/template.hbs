@@ -2,7 +2,7 @@
   <div style='font-weight: bold;'>{{entity.type}} - {{entity.version}} - {{entity.initiative}}</div>
   <div style='margin-bottom: 20px;'>
     <div>standee: {{entity.standee}}</div>
-    <div>hp: {{entity.hp}}</div>
+    <div>hp: {{entity.hp}} / {{entity.maxHp}}</div>
     <div>conditions:
       {{#each entity.conditions as |condition|}}
         {{condition.shorthand}}
@@ -19,7 +19,7 @@
 {{else}}
   <div style='font-weight: bold;'>{{entity.type}} - {{entity.initiative}}</div>
   <div style='margin-bottom: 20px;'>
-    <div>hp: {{entity.hp}}</div>
+    <div>hp: {{entity.hp}} / {{entity.maxHp}}</div>
     <div>conditions:
       {{#each entity.conditions as |condition|}}
         {{condition}}

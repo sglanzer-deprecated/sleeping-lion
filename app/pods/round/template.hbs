@@ -1,6 +1,22 @@
 <div style='position: relative; width: 100%; height: 100%;'>
   {{outlet}}
 
+  {{#if summoningMonster}}
+    {{#modal-dialog}}
+      {{summon-monster summonMonster=(action 'summonMonster'
+        (get model.roundOrder model.activeRoundOrder)
+      )}}
+    {{/modal-dialog}}
+  {{/if}}
+
+  {{#if summoningPlayerMonster}}
+    {{#modal-dialog}}
+      {{summon-player-monster summonPlayerMonster=(action 'summonPlayerMonster'
+        (get model.roundOrder model.activeRoundOrder)
+      )}}
+    {{/modal-dialog}}
+  {{/if}}
+
   <div style='display: flex; flex-direction: row;'>
     <div style='flex: 1; display: flex; flex-direction: column;'>
       <div>
@@ -64,9 +80,12 @@
       {{#with (get model.roundOrder model.activeRoundOrder) as |entity|}}
         {{entity-card entity=entity model=model onSelect=(action 'target' entity)}}
 
-        {{#unless entity.version}}
+        {{#if entity.version}}
+          <button {{action 'beginSummoningMonster'}}>Summon</button>
+        {{else}}
+          <button {{action 'beginSummoningPlayerMonster'}}>Summon</button>
           <button {{action 'reveal'}}>Reveal</button>
-        {{/unless}}
+        {{/if}}
       {{/with}}
 
       <div>Infuse</div>
@@ -90,8 +109,9 @@
       <hr>
 
       {{#if model.targetEntity}}
-        {{entity-action-card entity=model.targetEntity
-          damage=(action 'damage')
+        {{entity-action-card
+          entity=model.targetEntity
+          damage=(action 'damage' (get model.roundOrder model.activeRoundOrder))
           heal=(action 'heal')
           toggleCondition=(action 'toggleCondition')
         }}

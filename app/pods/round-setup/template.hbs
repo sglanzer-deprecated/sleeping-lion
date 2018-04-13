@@ -1,57 +1,75 @@
 <div>Round {{model.round}}</div>
 
-<div>Enter initiative</div>
-
-{{#unless model.playerInitiativeLocked}}
-  <form {{action (action 'drawMonsterCards') on='submit'}}>
-    {{#each model.players as |player|}}
-      {{player-initiative
-        player=player
-        onChange=(action 'setPlayerInitiative' player)
+<div style='display: flex;'>
+  <div style='flex: 1;'>
+    {{#each model.players as |entity|}}
+      {{entity-card
+        entity=entity
       }}
     {{/each}}
 
-    <button type='submit'>
-      Done
-    </button>
-  </form>
-{{else}}
-  <div>
-    {{#each model.players as |player|}}
-      <div>{{player.type}}: {{player.initiative}}</div>
+    {{#each monsters as |entity|}}
+      {{entity-card
+        entity=entity
+      }}
     {{/each}}
   </div>
 
-  {{#each monsterSummary as |monsterTypeSummary|}}
-    <div style='display: flex; flex-direction: column; align-items: center;'>
-      <div>{{monsterTypeSummary.type}}</div>
-      <div>{{monsterTypeSummary.initiative}}</div>
-      <div style='display: flex; flex-direction: row;'>
-        <div style='display: flex; flex-direction: column;'>
-          <div>Elite</div>
-          {{#each monsterTypeSummary.actions.elite as |eliteAction|}}
-            {{#if eliteAction.value}}
-              <div>{{eliteAction.key}}: {{eliteAction.value}}</div>
-            {{else}}
-              <div>{{eliteAction.key}}</div>
-            {{/if}}
-          {{/each}}
-        </div>
-        <div style='display: flex; flex-direction: column; margin-left: 1rem;'>
-          <div>Normal</div>
-          {{#each monsterTypeSummary.actions.normal as |normalAction|}}
-            {{#if normalAction.value}}
-              <div>{{normalAction.key}}: {{normalAction.value}}</div>
-            {{else}}
-              <div>{{normalAction.key}}</div>
-            {{/if}}
-          {{/each}}
-        </div>
-      </div>
-    </div>
-  {{/each}}
+  <div style='flex: 1;'>
+    <div>Enter initiative</div>
 
-  <button {{action (action 'nextStage')}}>
-    Done
-  </button>
-{{/unless}}
+    {{#unless model.playerInitiativeLocked}}
+      <form {{action (action 'drawMonsterCards') on='submit'}}>
+        {{#each model.players as |player|}}
+          {{player-initiative
+            player=player
+            onChange=(action 'setPlayerInitiative' player)
+          }}
+        {{/each}}
+
+        <button type='submit'>
+          Done
+        </button>
+      </form>
+    {{else}}
+      <div>
+        {{#each model.players as |player|}}
+          <div>{{player.type}}: {{player.initiative}}</div>
+        {{/each}}
+      </div>
+
+      {{#each monsterSummary as |monsterTypeSummary|}}
+        <div style='display: flex; flex-direction: column; align-items: center;'>
+          <div>{{monsterTypeSummary.type}}</div>
+          <div>{{monsterTypeSummary.initiative}}</div>
+          <div style='display: flex; flex-direction: row;'>
+            <div style='display: flex; flex-direction: column;'>
+              <div>Elite</div>
+              {{#each monsterTypeSummary.actions.elite as |eliteAction|}}
+                {{#if eliteAction.value}}
+                  <div>{{eliteAction.key}}: {{eliteAction.value}}</div>
+                {{else}}
+                  <div>{{eliteAction.key}}</div>
+                {{/if}}
+              {{/each}}
+            </div>
+            <div style='display: flex; flex-direction: column; margin-left: 1rem;'>
+              <div>Normal</div>
+              {{#each monsterTypeSummary.actions.normal as |normalAction|}}
+                {{#if normalAction.value}}
+                  <div>{{normalAction.key}}: {{normalAction.value}}</div>
+                {{else}}
+                  <div>{{normalAction.key}}</div>
+                {{/if}}
+              {{/each}}
+            </div>
+          </div>
+        </div>
+      {{/each}}
+
+      <button {{action (action 'nextStage')}}>
+        Done
+      </button>
+    {{/unless}}
+  </div>
+</div>

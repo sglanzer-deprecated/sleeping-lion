@@ -1,0 +1,18 @@
+{{#power-select
+  options=monsterTypes
+  placeholder='Monster type...'
+  selected=monsterType
+  onchange=(action 'setMonsterType')
+  as |monsterType|
+}}
+  {{monsterType}}
+{{/power-select}}
+
+{{#if monsterType}}
+  <button {{action (action summonMonster monsterType 'elite')}}>
+    Elite
+  </button>
+  <button {{action (action summonMonster monsterType 'normal')}}>
+    Normal
+  </button>
+{{/if}}
