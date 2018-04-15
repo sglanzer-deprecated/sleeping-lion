@@ -35,4 +35,10 @@
 * The number of elite/normals for each monster are determined by the number of players
 * Initially I thought it would be a good idea to just randomize the standees for the player, now I think it's probably best to just have them grab the first standees available and set the number
   * We can support both approaches, randomize would just set the toggles (no need to restrict the number of randomized clicks)
-* Proceed to the next phase when all players have confirmed
+* Proceed to the next stage when all players have confirmed
+
+# Round setup
+* Show the current player/monster states (standee / hp / conditions / base stats) for reference in choosing actions
+* Show the current infusion state (+ trap damage, etc. - basically anything that is a global reference)
+  * _It would be nice to keep both of the above in the same location / accessible in both the round and round setup stages_
+    * Probably means that this should be in a sidebar (to make it easy to port to mobile)
