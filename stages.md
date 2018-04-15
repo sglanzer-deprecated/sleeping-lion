@@ -42,3 +42,9 @@
 * Show the current infusion state (+ trap damage, etc. - basically anything that is a global reference)
   * _It would be nice to keep both of the above in the same location / accessible in both the round and round setup stages_
     * Probably means that this should be in a sidebar (to make it easy to port to mobile)
+* All player characters need to enter initiative (keep it secret) and confirm to move to the next part of the round setup
+* Once all the player initiatives are in the monster actions can be revealed and the round order setup up
+  * _It doesn't seem very important to distinguish between this and the start of the round itself, but that means it needs to be quite easy to see what each monster is doing during the round and what the actual round order is_
+* Given the above note we can probably move directly into the round after this
+
+# Round
