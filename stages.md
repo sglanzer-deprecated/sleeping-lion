@@ -48,3 +48,5 @@
 * Given the above note we can probably move directly into the round after this
 
 # Round
+
+* Advantage and disadvantage don't stack and cancel out (e.g. range attack at melee range + strengthen = normal, muddle + strengthen = normal)
