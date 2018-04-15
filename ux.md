@@ -35,3 +35,4 @@
 * The number of elite/normals for each monster are determined by the number of players
 * Initially I thought it would be a good idea to just randomize the standees for the player, now I think it's probably best to just have them grab the first standees available and set the number
   * We can support both approaches, randomize would just set the toggles (no need to restrict the number of randomized clicks)
+* Proceed to the next phase when all players have confirmed
